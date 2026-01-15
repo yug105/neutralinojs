@@ -865,6 +865,12 @@ public:
     return (void *)m_webview;
   }
 
+  void focus() {
+    if (m_controller != nullptr) {
+      m_controller->MoveFocus(COREWEBVIEW2_MOVE_FOCUS_REASON_PROGRAMMATIC);
+    }
+  }
+
 private:
   LPWSTR to_lpwstr(const std::string s) {
     int n = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, NULL, 0);
@@ -980,6 +986,9 @@ public:
                 windowStateChange(WEBVIEW_WINDOW_CLOSE);
               break;
             case WM_ACTIVATE:
+              if(LOWORD(wp) != WA_INACTIVE) {
+                w->m_browser->focus();
+              }
               if(!windowStateChange) break;
               if(LOWORD(wp) == WA_INACTIVE)
                 windowStateChange(WEBVIEW_WINDOW_BLUR);
